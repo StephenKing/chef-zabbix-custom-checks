@@ -1,0 +1,46 @@
+#!/usr/bin/python
+
+import string
+import sys
+from optparse import OptionParser
+
+
+def read_data():
+
+	bc_data=open('/proc/user_beancounters', 'r')
+
+	data=dict()
+
+	for line in bc_data:
+		if 'Version' in line or 'uid' in line or 'dummy' in line:
+			continue
+		else:
+			fields=line.split( )
+
+			if len(fields) == 7:
+				fields.pop(0) # remove the first element
+
+			resource_data=dict()
+			resource_data['held']=fields[1]
+			resource_data['maxheld']=fields[2]
+			resource_data['barrier']=fields[3]
+			resource_data['limit']=fields[4]
+			resource_data['failcnt']=fields[5]
+
+			data[fields[0]]=resource_data
+	return data
+
+def get_value(data, resource, value):
+	return data[resource][value]
+
+
+if __name__ == "__main__":
+	parser = OptionParser()
+
+	parser.add_option('-r', '--resource', dest='resource', type='string', help='Resource type: kmemsize, privvmpages,..')
+	parser.add_option('-v', '--value',    dest='value',    type='string', help='Value type: held, maxheld, barrier, limit, failcnt')
+
+	(options, args) = parser.parse_args()
+
+	data = read_data()
+	print get_value(data, options.resource, options.value)

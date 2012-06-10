@@ -1,0 +1,3 @@
+UserParameter=custom.apt-update-check.security,/usr/lib/update-notifier/apt-check 2>&1 | cut -f1 -d";"
+UserParameter=custom.apt-update-check.normal,/usr/lib/update-notifier/apt-check 2>&1 | cut -f2 -d";"
+UserParameter=custom.apt-update-check.list,/usr/lib/update-notifier/apt-check --package-names 2>&1

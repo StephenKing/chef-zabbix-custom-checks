@@ -1,0 +1,5 @@
+# Zabbix configuration for running checks without password
+Cmnd_Alias ZABBIX_CMD_VARNISHSTAT = /usr/bin/varnishstat
+
+# ZABBIX special privileges
+zabbix ALL=NOPASSWD: ZABBIX_CMD_VARNISHSTAT

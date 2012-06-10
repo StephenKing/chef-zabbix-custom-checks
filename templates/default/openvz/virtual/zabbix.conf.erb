@@ -1,0 +1,2 @@
+UserParameter=custom.openvz.virtual.beancounter.failcnt,sudo <%= node.zabbix.external_dir %>/openvz-virtual-beancount-failcnt.py -c
+UserParameter=custom.openvz.virtual.beancounter.value[*],sudo <%= node.zabbix.external_dir %>/openvz-virtual-beancount-monitor.py -r $1 -v $2

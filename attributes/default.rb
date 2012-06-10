@@ -1,0 +1,1 @@
+default["zabbix_custom_checks"]["nginx"]["port"] = 80

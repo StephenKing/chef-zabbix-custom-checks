@@ -1,0 +1,5 @@
+# Zabbix configuration for running checks without password
+Cmnd_Alias ZABBIX_CMD_OPENVZ = <%= node.zabbix.external_dir %>/openvz-virtual-beancount-monitor.py *, <%= node.zabbix.external_dir %>/openvz-virtual-beancount-failcnt.py -c
+
+# ZABBIX special privileges
+zabbix ALL=NOPASSWD: ZABBIX_CMD_OPENVZ
