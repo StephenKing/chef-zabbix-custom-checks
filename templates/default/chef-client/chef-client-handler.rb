@@ -23,14 +23,17 @@ module Zabbix
       ].join("\n")
 
       file.write(message)
+      file.close()
       cmd = [File.join(node['zabbix']['bin_dir'], "zabbix_sender"), "--config", File.join(node['zabbix']['etc_dir'], "zabbix_agentd.conf"), "--input-file", file.path]
-      Chef::Log.debug "Sending to zabbix: #{message}" 
+      Chef::Log.debug "Sending to zabbix: #{message}"
+      Chef::Log.debug "Command #{cmd.join(" ")}"
       if RUBY_VERSION < "1.9"
-        Chef::Log.debug IO.popen(cmd.join(" "))
+        out = IO.popen(cmd.join(" "))
       else
-        Chef::Log.debug IO.popen(cmd)
+        out = IO.popen(cmd)
       end
-      file.close!()
+      Chef::Log.debug "output #{out.readlines}"
+      out.close
     end
   end
 end
