@@ -1,6 +1,7 @@
 require 'rubygems'
 require 'chef/log'
 require 'chef'
+require 'tempfile'
 
 module Zabbix
   class Report < Chef::Handler
@@ -9,7 +10,7 @@ module Zabbix
       Chef::Log.info "Zabbix::Report handler started"
 
       prefix = "custom.chef-client.last_run"
-      tempfile = "/tmp/chef-client-handler-zabbix-report.txt"
+      file = Tempfile.new('client-handler-zabbix-report')
       host_name = node[:zabbix][:agent][:hostname] || node[:fqdn]
       
       message = [
@@ -21,9 +22,15 @@ module Zabbix
         "#{host_name} #{prefix}.updated_resources_num #{run_status.updated_resources.length}",
       ].join("\n")
 
-      File.open(tempfile, 'w') {|f| f.write(message)}
+      file.write(message)
+      cmd = [File.join(node['zabbix']['bin_dir'], "zabbix_sender"), "--config", File.join(node['zabbix']['etc_dir'], "zabbix_agentd.conf"), "--input-file", file.path]
       Chef::Log.debug "Sending to zabbix: #{message}" 
-      Chef::Log.debug `#{node.zabbix.install_dir}/bin/zabbix_sender --config #{node.zabbix.etc_dir}/zabbix_agentd.conf --input-file #{tempfile}`
+      if RUBY_VERSION < "1.9"
+        Chef::Log.debug IO.popen(cmd.join(" "))
+      else
+        Chef::Log.debug IO.popen(cmd)
+      end
+      file.close!()
     end
   end
 end
